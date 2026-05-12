@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tic-Tac-Toe</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header>
+    <h1>Tic-Tac-Toe</h1>
+    <button id="theme-toggle" aria-label="Toggle dark mode">🌙</button>
+  </header>
+
+  <main>
+    <section class="setup-panel">
+      <div class="player-setup">
+        <label>
+          <span class="x-label">X Player</span>
+          <select id="x-type">
+            <option value="human">Human</option>
+            <option value="ai">AI</option>
+          </select>
+        </label>
+        <label>
+          <span class="o-label">O Player</span>
+          <select id="o-type">
+            <option value="human">Human</option>
+            <option value="ai">AI</option>
+          </select>
+        </label>
+      </div>
+      <button id="random-assign">Random Assign</button>
+    </section>
+
+    <section class="scoreboard">
+      <div class="score-card" id="score-x">
+        <span class="score-label x-label">X</span>
+        <span class="score-value" id="score-x-value">0</span>
+      </div>
+      <div class="score-divider">vs</div>
+      <div class="score-card" id="score-o">
+        <span class="score-label o-label">O</span>
+        <span class="score-value" id="score-o-value">0</span>
+      </div>
+    </section>
+
+    <div id="status" class="status"></div>
+
+    <div class="board" id="board">
+      <div class="cell" data-index="0"></div>
+      <div class="cell" data-index="1"></div>
+      <div class="cell" data-index="2"></div>
+      <div class="cell" data-index="3"></div>
+      <div class="cell" data-index="4"></div>
+      <div class="cell" data-index="5"></div>
+      <div class="cell" data-index="6"></div>
+      <div class="cell" data-index="7"></div>
+      <div class="cell" data-index="8"></div>
+    </div>
+
+    <button id="restart">Restart</button>
+  </main>
+
+  <div class="modal-overlay hidden" id="modal">
+    <div class="modal">
+      <div class="modal-result" id="modal-result"></div>
+      <div class="modal-sub" id="modal-sub"></div>
+      <button id="play-again">Play Again</button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

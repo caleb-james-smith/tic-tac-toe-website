@@ -1,0 +1,353 @@
+/* ── CSS Custom Properties ── */
+:root {
+  --bg:            #f5f5f5;
+  --board-bg:      #ffffff;
+  --cell-border:   #cccccc;
+  --cell-hover:    #d4edda;
+  --cell-hover-border: #4caf50;
+  --x-color:       #d62828;
+  --o-color:       #1a5fa3;
+  --last-move:     #ffd700;
+  --win-cell:      #ffe066;
+  --text:          #222222;
+  --text-muted:    #666666;
+  --btn-bg:        #dddddd;
+  --btn-text:      #222222;
+  --btn-hover:     #c8c8c8;
+  --score-active:  #e8f4e8;
+  --score-border-active: #4caf50;
+  --modal-bg:      rgba(255, 255, 255, 0.96);
+  --modal-shadow:  rgba(0, 0, 0, 0.2);
+  --overlay:       rgba(0, 0, 0, 0.4);
+}
+
+body.dark-mode {
+  --bg:            #1a1a2e;
+  --board-bg:      #16213e;
+  --cell-border:   #2a2a4a;
+  --cell-hover:    #1a3d2b;
+  --cell-hover-border: #2e7d52;
+  --x-color:       #ff4d4d;
+  --o-color:       #4da6ff;
+  --last-move:     #ffc200;
+  --win-cell:      #b8860b;
+  --text:          #e0e0e0;
+  --text-muted:    #9090a0;
+  --btn-bg:        #2a2a4a;
+  --btn-text:      #e0e0e0;
+  --btn-hover:     #3a3a5a;
+  --score-active:  #1a2e1a;
+  --score-border-active: #2e7d52;
+  --modal-bg:      rgba(22, 33, 62, 0.97);
+  --modal-shadow:  rgba(0, 0, 0, 0.6);
+  --overlay:       rgba(0, 0, 0, 0.65);
+}
+
+/* ── Reset & Base ── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: background 0.3s, color 0.3s;
+}
+
+/* ── Header ── */
+header {
+  width: 100%;
+  max-width: 460px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.4rem 1rem 0.6rem;
+}
+
+header h1 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+#theme-toggle {
+  font-size: 1.4rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.2rem 0.4rem;
+  border-radius: 6px;
+  transition: background 0.2s;
+}
+
+#theme-toggle:hover {
+  background: var(--btn-bg);
+}
+
+/* ── Main ── */
+main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  width: 100%;
+  max-width: 460px;
+}
+
+/* ── Setup Panel ── */
+.setup-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  width: 100%;
+}
+
+.player-setup {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.player-setup label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.player-setup select {
+  padding: 0.4rem 0.7rem;
+  border-radius: 6px;
+  border: 2px solid var(--cell-border);
+  background: var(--board-bg);
+  color: var(--text);
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.player-setup select:focus {
+  outline: none;
+  border-color: #4caf50;
+}
+
+/* ── Labels colored by player ── */
+.x-label { color: var(--x-color); }
+.o-label { color: var(--o-color); }
+
+/* ── Buttons ── */
+button {
+  padding: 0.5rem 1.2rem;
+  border: none;
+  border-radius: 8px;
+  background: var(--btn-bg);
+  color: var(--btn-text);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+}
+
+button:hover {
+  background: var(--btn-hover);
+}
+
+button:active {
+  transform: scale(0.97);
+}
+
+#random-assign {
+  padding: 0.45rem 1.4rem;
+}
+
+#restart {
+  margin-top: 0.2rem;
+  padding: 0.5rem 2rem;
+}
+
+/* ── Scoreboard ── */
+.scoreboard {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  justify-content: center;
+}
+
+.score-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.5rem 1.8rem;
+  border-radius: 10px;
+  border: 2px solid transparent;
+  background: var(--board-bg);
+  transition: border-color 0.3s, background 0.3s;
+  min-width: 90px;
+}
+
+.score-card.active {
+  border-color: var(--score-border-active);
+  background: var(--score-active);
+}
+
+.score-label {
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.score-value {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.score-divider {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+/* ── Status Bar ── */
+.status {
+  font-size: 1.1rem;
+  font-weight: 600;
+  min-height: 1.6rem;
+  text-align: center;
+}
+
+/* ── Game Board ── */
+.board {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  background: var(--cell-border);
+  border: 6px solid var(--cell-border);
+  border-radius: 12px;
+  width: 100%;
+  max-width: 360px;
+  aspect-ratio: 1;
+}
+
+.cell {
+  background: var(--board-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3.4rem;
+  font-weight: 800;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.15s;
+  border-radius: 6px;
+  position: relative;
+}
+
+.cell:first-child { border-radius: 8px 0 0 0; }
+.cell:nth-child(3) { border-radius: 0 8px 0 0; }
+.cell:nth-child(7) { border-radius: 0 0 0 8px; }
+.cell:last-child { border-radius: 0 0 8px 0; }
+
+.cell.x { color: var(--x-color); }
+.cell.o { color: var(--o-color); }
+
+.cell.last-move {
+  background: var(--last-move);
+}
+
+.cell.win-cell {
+  background: var(--win-cell);
+}
+
+.cell.hover-preview {
+  background: var(--cell-hover);
+  outline: 2px solid var(--cell-hover-border);
+  outline-offset: -2px;
+}
+
+/* ── Modal ── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--overlay);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  animation: fadeIn 0.2s ease;
+}
+
+.modal-overlay.hidden {
+  display: none;
+}
+
+.modal {
+  background: var(--modal-bg);
+  border-radius: 16px;
+  padding: 2.5rem 3rem;
+  text-align: center;
+  box-shadow: 0 8px 40px var(--modal-shadow);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.8rem;
+  animation: popIn 0.25s ease;
+}
+
+.modal-result {
+  font-size: 2.4rem;
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.modal-result.x-wins { color: var(--x-color); }
+.modal-result.o-wins { color: var(--o-color); }
+.modal-result.draw   { color: var(--text); }
+
+.modal-sub {
+  font-size: 1rem;
+  color: var(--text-muted);
+  margin-bottom: 0.4rem;
+}
+
+#play-again {
+  padding: 0.6rem 2.2rem;
+  font-size: 1rem;
+  background: #4caf50;
+  color: #fff;
+}
+
+#play-again:hover {
+  background: #43a047;
+}
+
+/* ── Animations ── */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes popIn {
+  from { transform: scale(0.85); opacity: 0; }
+  to   { transform: scale(1);    opacity: 1; }
+}
+
+/* ── Responsive ── */
+@media (max-width: 400px) {
+  header h1 { font-size: 1.4rem; }
+  .cell { font-size: 2.6rem; }
+  .modal { padding: 2rem 1.5rem; }
+  .modal-result { font-size: 2rem; }
+}
