@@ -232,6 +232,7 @@ button:active {
 .board {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
   gap: 6px;
   background: var(--cell-border);
   border: 6px solid var(--cell-border);
@@ -253,6 +254,8 @@ button:active {
   transition: background 0.15s;
   border-radius: 6px;
   position: relative;
+  min-height: 0;
+  overflow: hidden;
 }
 
 .cell:first-child { border-radius: 8px 0 0 0; }
