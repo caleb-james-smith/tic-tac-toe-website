@@ -41,15 +41,6 @@ document.getElementById('theme-toggle').addEventListener('click', () => {
 });
 
 // ── Setup Controls ──
-document.getElementById('random-assign').addEventListener('click', () => {
-  const types = ['human', 'ai'];
-  if (Math.random() < 0.5) {
-    xTypeEl.value = types[0]; oTypeEl.value = types[1];
-  } else {
-    xTypeEl.value = types[1]; oTypeEl.value = types[0];
-  }
-  resetBoard();
-});
 
 xTypeEl.addEventListener('change', resetBoard);
 oTypeEl.addEventListener('change', resetBoard);

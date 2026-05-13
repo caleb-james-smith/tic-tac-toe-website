@@ -168,10 +168,6 @@ button:active {
   transform: scale(0.97);
 }
 
-#random-assign {
-  padding: 0.45rem 1.4rem;
-}
-
 #restart {
   margin-top: 0.2rem;
   padding: 0.5rem 2rem;
