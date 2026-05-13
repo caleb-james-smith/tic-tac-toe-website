@@ -6,23 +6,52 @@ const WIN_LINES = [
 
 // ── State ──
 let board = Array(9).fill(null);
-let currentPlayer = 'X';
+let currentPlayer = 'X'; // internal game symbol
 let gameOver = false;
 let lastMoveIndex = null;
-let scores = { X: 0, O: 0 };
+let scores = [0, 0];  // scores[0] = Player 1, scores[1] = Player 2
+let xPlayerIndex = 0; // 0 = Player 1 is X, 1 = Player 2 is X
 let aiTimer = null;
 
-const cells       = document.querySelectorAll('.cell');
-const statusEl    = document.getElementById('status');
-const modalEl     = document.getElementById('modal');
-const modalResult = document.getElementById('modal-result');
-const modalSub    = document.getElementById('modal-sub');
-const scoreXEl    = document.getElementById('score-x-value');
-const scoreOEl    = document.getElementById('score-o-value');
-const scoreXCard  = document.getElementById('score-x');
-const scoreOCard  = document.getElementById('score-o');
-const xTypeEl     = document.getElementById('x-type');
-const oTypeEl     = document.getElementById('o-type');
+// ── DOM Refs ──
+const cells        = document.querySelectorAll('.cell');
+const statusEl     = document.getElementById('status');
+const modalEl      = document.getElementById('modal');
+const modalResult  = document.getElementById('modal-result');
+const modalSub     = document.getElementById('modal-sub');
+const p1NameEl     = document.getElementById('p1-name');
+const p2NameEl     = document.getElementById('p2-name');
+const p1TypeEl     = document.getElementById('p1-type');
+const p2TypeEl     = document.getElementById('p2-type');
+const scoreP1El    = document.getElementById('score-p1-value');
+const scoreP2El    = document.getElementById('score-p2-value');
+const scoreP1Card  = document.getElementById('score-p1');
+const scoreP2Card  = document.getElementById('score-p2');
+const scoreP1Name  = document.getElementById('score-p1-name');
+const scoreP2Name  = document.getElementById('score-p2-name');
+const scoreP1Role  = document.getElementById('score-p1-role');
+const scoreP2Role  = document.getElementById('score-p2-role');
+
+// ── Player Helpers ──
+function playerName(idx) {
+  return (idx === 0 ? p1NameEl.value : p2NameEl.value).trim() || `Player ${idx + 1}`;
+}
+
+function playerType(idx) {
+  return idx === 0 ? p1TypeEl.value : p2TypeEl.value;
+}
+
+function symbolToIndex(symbol) {
+  return symbol === 'X' ? xPlayerIndex : 1 - xPlayerIndex;
+}
+
+function currentPlayerIndex() {
+  return symbolToIndex(currentPlayer);
+}
+
+function isHumanTurn() {
+  return playerType(currentPlayerIndex()) === 'human';
+}
 
 // ── Theme ──
 (function initTheme() {
@@ -41,13 +70,16 @@ document.getElementById('theme-toggle').addEventListener('click', () => {
 });
 
 // ── Setup Controls ──
-
-xTypeEl.addEventListener('change', resetBoard);
-oTypeEl.addEventListener('change', resetBoard);
+p1TypeEl.addEventListener('change', resetBoard);
+p2TypeEl.addEventListener('change', resetBoard);
+p1NameEl.addEventListener('input', () => { updateScoreLabels(); updateStatus(); });
+p2NameEl.addEventListener('input', () => { updateScoreLabels(); updateStatus(); });
 
 document.getElementById('restart').addEventListener('click', resetBoard);
+
 document.getElementById('play-again').addEventListener('click', () => {
   modalEl.classList.add('hidden');
+  xPlayerIndex = 1 - xPlayerIndex; // swap X/O roles each game
   resetBoard();
 });
 
@@ -71,27 +103,15 @@ cells.forEach(cell => {
   });
 });
 
-function isHumanTurn() {
-  return getPlayerType(currentPlayer) === 'human';
-}
-
-function getPlayerType(player) {
-  return player === 'X' ? xTypeEl.value : oTypeEl.value;
-}
-
 // ── Core Game ──
 function makeMove(idx) {
   if (board[idx] || gameOver) return;
-
   board[idx] = currentPlayer;
   lastMoveIndex = idx;
   renderBoard();
 
   const result = checkResult();
-  if (result) {
-    endGame(result);
-    return;
-  }
+  if (result) { endGame(result); return; }
 
   currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
   updateStatus();
@@ -100,17 +120,15 @@ function makeMove(idx) {
 }
 
 function scheduleAI() {
-  if (gameOver || getPlayerType(currentPlayer) !== 'ai') return;
-  const bothAI = xTypeEl.value === 'ai' && oTypeEl.value === 'ai';
-  const delay = bothAI ? 600 : 300;
+  if (gameOver || playerType(currentPlayerIndex()) !== 'ai') return;
+  const bothAI = p1TypeEl.value === 'ai' && p2TypeEl.value === 'ai';
   aiTimer = setTimeout(() => {
     if (!gameOver) makeMove(getBestMove());
-  }, delay);
+  }, bothAI ? 600 : 300);
 }
 
 function getBestMove() {
-  let bestScore = -Infinity;
-  let bestIdx = null;
+  let bestScore = -Infinity, bestIdx = null;
   for (let i = 0; i < 9; i++) {
     if (!board[i]) {
       board[i] = currentPlayer;
@@ -122,31 +140,23 @@ function getBestMove() {
   return bestIdx;
 }
 
-function minimax(b, depth, isMaximizing, aiPlayer) {
-  const opponent = aiPlayer === 'X' ? 'O' : 'X';
+function minimax(b, depth, isMaximizing, aiSymbol) {
+  const oppSymbol = aiSymbol === 'X' ? 'O' : 'X';
   const winner = getWinner(b);
-  if (winner === aiPlayer)  return 10 - depth;
-  if (winner === opponent)  return depth - 10;
+  if (winner === aiSymbol)  return 10 - depth;
+  if (winner === oppSymbol) return depth - 10;
   if (b.every(c => c))      return 0;
 
   if (isMaximizing) {
     let best = -Infinity;
     for (let i = 0; i < 9; i++) {
-      if (!b[i]) {
-        b[i] = aiPlayer;
-        best = Math.max(best, minimax(b, depth + 1, false, aiPlayer));
-        b[i] = null;
-      }
+      if (!b[i]) { b[i] = aiSymbol; best = Math.max(best, minimax(b, depth + 1, false, aiSymbol)); b[i] = null; }
     }
     return best;
   } else {
     let best = Infinity;
     for (let i = 0; i < 9; i++) {
-      if (!b[i]) {
-        b[i] = opponent;
-        best = Math.min(best, minimax(b, depth + 1, true, aiPlayer));
-        b[i] = null;
-      }
+      if (!b[i]) { b[i] = oppSymbol; best = Math.min(best, minimax(b, depth + 1, true, aiSymbol)); b[i] = null; }
     }
     return best;
   }
@@ -161,7 +171,7 @@ function getWinner(b) {
 
 function checkResult() {
   const winner = getWinner(board);
-  if (winner) return { type: 'win', player: winner };
+  if (winner) return { type: 'win', symbol: winner };
   if (board.every(c => c)) return { type: 'draw' };
   return null;
 }
@@ -183,23 +193,30 @@ function highlightWin(winLine) {
   });
 }
 
-function updateStatus(text, colorClass) {
-  if (text) {
-    statusEl.textContent = text;
-    statusEl.style.color = '';
-    return;
-  }
-  const color = currentPlayer === 'X'
-    ? getComputedStyle(document.documentElement).getPropertyValue('--x-color').trim()
-    : getComputedStyle(document.documentElement).getPropertyValue('--o-color').trim();
+function updateStatus() {
+  const idx = currentPlayerIndex();
+  const name = playerName(idx);
+  const typeLabel = playerType(idx) === 'ai' ? ' (AI)' : '';
+  const color = getComputedStyle(document.documentElement)
+    .getPropertyValue(currentPlayer === 'X' ? '--x-color' : '--o-color').trim();
   statusEl.style.color = color;
-  const typeLabel = getPlayerType(currentPlayer) === 'ai' ? ' (AI)' : '';
-  statusEl.textContent = `${currentPlayer}'s Turn${typeLabel}`;
+  statusEl.textContent = `${name}'s Turn (${currentPlayer})${typeLabel}`;
+}
+
+function updateScoreLabels() {
+  scoreP1Name.textContent = playerName(0);
+  scoreP2Name.textContent = playerName(1);
+  const p1Symbol = xPlayerIndex === 0 ? 'X' : 'O';
+  const p2Symbol = xPlayerIndex === 1 ? 'X' : 'O';
+  scoreP1Role.textContent = p1Symbol;
+  scoreP1Role.className = `score-role ${p1Symbol === 'X' ? 'x-label' : 'o-label'}`;
+  scoreP2Role.textContent = p2Symbol;
+  scoreP2Role.className = `score-role ${p2Symbol === 'X' ? 'x-label' : 'o-label'}`;
 }
 
 function updateScoreHighlight() {
-  scoreXCard.classList.toggle('active', currentPlayer === 'X');
-  scoreOCard.classList.toggle('active', currentPlayer === 'O');
+  scoreP1Card.classList.toggle('active', currentPlayerIndex() === 0);
+  scoreP2Card.classList.toggle('active', currentPlayerIndex() === 1);
 }
 
 // ── End Game ──
@@ -214,36 +231,32 @@ function endGame(result) {
     renderBoard();
     highlightWin(winLine);
 
-    scores[result.player] += 1;
-    const loser = result.player === 'X' ? 'O' : 'X';
-    const emoji = result.player === 'X' ? '🔴' : '🔵';
+    const winnerIdx = symbolToIndex(result.symbol);
+    scores[winnerIdx] += 1;
     updateScores();
 
-    modalResult.textContent = `${emoji} ${result.player} Wins!`;
-    modalResult.className = `modal-result ${result.player === 'X' ? 'x-wins' : 'o-wins'}`;
-    modalSub.textContent = 'Congratulations!';
-    statusEl.textContent = '';
-    scoreXCard.classList.remove('active');
-    scoreOCard.classList.remove('active');
+    const emoji = result.symbol === 'X' ? '🔴' : '🔵';
+    modalResult.textContent = `${emoji} ${playerName(winnerIdx)} Wins!`;
+    modalResult.className = `modal-result ${result.symbol === 'X' ? 'x-wins' : 'o-wins'}`;
+    modalSub.textContent = 'X and O will swap next game!';
   } else {
-    scores['X'] += 0.5;
-    scores['O'] += 0.5;
+    scores[0] += 0.5;
+    scores[1] += 0.5;
     updateScores();
-
     modalResult.textContent = "It's a Draw!";
     modalResult.className = 'modal-result draw';
-    modalSub.textContent = 'Well played by both sides.';
-    statusEl.textContent = '';
-    scoreXCard.classList.remove('active');
-    scoreOCard.classList.remove('active');
+    modalSub.textContent = 'Well played — X and O will swap next game!';
   }
 
+  statusEl.textContent = '';
+  scoreP1Card.classList.remove('active');
+  scoreP2Card.classList.remove('active');
   setTimeout(() => modalEl.classList.remove('hidden'), 400);
 }
 
 function updateScores() {
-  scoreXEl.textContent = formatScore(scores.X);
-  scoreOEl.textContent = formatScore(scores.O);
+  scoreP1El.textContent = formatScore(scores[0]);
+  scoreP2El.textContent = formatScore(scores[1]);
 }
 
 function formatScore(n) {
@@ -259,6 +272,8 @@ function resetBoard() {
   lastMoveIndex = null;
   modalEl.classList.add('hidden');
   renderBoard();
+  updateScoreLabels();
+  updateScores();
   updateStatus();
   updateScoreHighlight();
   scheduleAI();
