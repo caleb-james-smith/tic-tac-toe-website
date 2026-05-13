@@ -5,9 +5,7 @@ A browser-based tic-tac-toe game with human and AI players, score tracking, and 
 ## Live Demo
 
 Once deployed, the game is available at:
-```
 https://caleb-james-smith.github.io/tic-tac-toe-website/
-```
 
 ---
 
@@ -46,10 +44,8 @@ https://caleb-james-smith.github.io/tic-tac-toe-website/
 1. Push the repository to GitHub.
 2. Go to your repository on GitHub → **Settings** → **Pages**.
 3. Under **Source**, select the `main` branch and root (`/`) folder.
-4. Click **Save**. Your site will be live in a minute at:
-   ```
+4. Click **Save**. Your site should be live soon (about a minute) at:
    https://caleb-james-smith.github.io/tic-tac-toe-website/
-   ```
 
 ---
 
