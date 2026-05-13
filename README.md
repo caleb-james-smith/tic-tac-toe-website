@@ -6,7 +6,7 @@ A browser-based tic-tac-toe game with human and AI players, score tracking, and 
 
 Once deployed, the game is available at:
 ```
-https://<your-username>.github.io/<your-repo-name>/
+https://caleb-james-smith.github.io/tic-tac-toe-website/
 ```
 
 ---
@@ -28,8 +28,8 @@ https://<your-username>.github.io/<your-repo-name>/
 
 1. Clone or download this repository:
    ```bash
-   git clone https://github.com/<your-username>/<your-repo-name>.git
-   cd <your-repo-name>
+   git clone https://github.com/caleb-james-smith/tic-tac-toe-website.git
+   cd tic-tac-toe-website
    ```
 
 2. Open `index.html` in any modern browser — no server or install needed:
@@ -48,7 +48,7 @@ https://<your-username>.github.io/<your-repo-name>/
 3. Under **Source**, select the `main` branch and root (`/`) folder.
 4. Click **Save**. Your site will be live in a minute at:
    ```
-   https://<your-username>.github.io/<your-repo-name>/
+   https://caleb-james-smith.github.io/tic-tac-toe-website/
    ```
 
 ---
