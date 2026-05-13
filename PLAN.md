@@ -24,11 +24,11 @@ tic-tac-toe-website/
 ---
 
 ## Player Setup
+- Players are identified as **Player 1** and **Player 2**, each with a customizable name (editable text input)
+- Each player also has a type dropdown: `Human` | `AI`
 - **X always goes first**
-- Before each game, players choose who controls X and who controls O:
-  - Select manually (Human or AI for each)
-  - Or use a **Random Assign** button to randomly assign roles
-- Player type options per slot: `Human` | `AI`
+- X and O roles are automatically swapped between Player 1 and Player 2 after each game (via Play Again), so neither player is permanently stuck going first
+- The Restart button resets the board without swapping roles or scores
 
 ---
 
@@ -58,8 +58,9 @@ tic-tac-toe-website/
 ---
 
 ## Turn Indicator
-- Status bar always shows whose turn it is, e.g. **"X's Turn"** in red or **"O's Turn"** in blue
-- Active player's score panel subtly highlighted (e.g. border or background accent)
+- Status bar shows the current player's name and symbol, e.g. **"Jimmy's Turn (X)"** in red or **"Player 2's Turn (O)"** in blue
+- Status text updates live as player names are typed — no move required
+- Active player's score card is subtly highlighted (green border and background accent)
 
 ---
 
@@ -83,31 +84,33 @@ tic-tac-toe-website/
 - **Win**: +1 point
 - **Draw**: +0.5 points each
 - **Loss**: +0 points
-- Score displayed in a scoreboard panel showing X and O scores side by side
-- Scores update immediately after each game result
+- Scores are tracked by **Player 1** and **Player 2**, not by symbol — so points follow the person across role swaps
+- Scoreboard shows each player's name, their current X/O role badge, and their score side by side
+- Scores and name labels update live when player names are typed
 
 ---
 
 ## UI Layout (`index.html`)
 1. **Header** — game title + light/dark mode toggle button
-2. **Setup Panel** — dropdowns/buttons to assign X and O player types + Random Assign button
-3. **Scoreboard** — X score | O score, with active player highlighted
-4. **Status Bar** — current turn (colored by player) or game result
+2. **Setup Panel** — two player rows, each with a name text input and a Human/AI dropdown
+3. **Scoreboard** — Player 1 | Player 2 score cards, each showing name, X/O role badge, and score; active player highlighted
+4. **Status Bar** — current player's name and symbol (e.g. "Jimmy's Turn (X)"), colored by symbol; updates live on name input
 5. **Game Board** — 3×3 grid of clickable cells
-6. **Restart Button** — reset the board without changing player setup or scores
-7. **Win/Draw Modal** — overlay shown on game end with result and Play Again button
+6. **Restart Button** — reset the board without changing player setup, roles, or scores
+7. **Win/Draw Modal** — overlay shown on game end with result and Play Again button (Play Again also swaps X/O roles)
 
 ---
 
 ## Game Logic (`script.js`)
 - Board state as a 9-element array
-- Turn tracking (X always starts)
+- Turn tracking (X always starts); `xPlayerIndex` tracks which player (0 or 1) is currently X
 - Win detection: check all 8 winning combinations after each move
 - Draw detection: all cells filled with no winner
 - Last move index tracked and applied as yellow highlight class
 - Hover preview via CSS class toggled on `mouseenter`/`mouseleave` for empty cells on human turns
 - Event-driven: cell clicks trigger human moves; AI moves triggered automatically after human turn (or on a short delay for AI vs AI)
-- Score updated and modal shown on game end
+- Name input events trigger live re-render of status bar and scoreboard labels
+- Score updated and modal shown on game end; Play Again swaps `xPlayerIndex` before resetting
 
 ---
 
