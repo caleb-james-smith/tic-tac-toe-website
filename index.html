@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tic-Tac-Toe</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header>
+    <h1>Tic-Tac-Toe</h1>
+    <button id="theme-toggle" aria-label="Toggle dark mode">🌙</button>
+  </header>
+
+  <main>
+    <section class="setup-panel">
+      <div class="player-setup">
+        <div class="player-row">
+          <input type="text" id="p1-name" value="Player 1" maxlength="14" aria-label="Player 1 name" />
+          <select id="p1-type">
+            <option value="human">Human</option>
+            <option value="ai">AI</option>
+          </select>
+        </div>
+        <div class="player-row">
+          <input type="text" id="p2-name" value="Player 2" maxlength="14" aria-label="Player 2 name" />
+          <select id="p2-type">
+            <option value="human">Human</option>
+            <option value="ai">AI</option>
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <section class="scoreboard">
+      <div class="score-card" id="score-p1">
+        <div class="score-header">
+          <span class="score-name" id="score-p1-name">Player 1</span>
+          <span class="score-role x-label" id="score-p1-role">X</span>
+        </div>
+        <span class="score-value" id="score-p1-value">0</span>
+      </div>
+      <div class="score-divider">vs</div>
+      <div class="score-card" id="score-p2">
+        <div class="score-header">
+          <span class="score-name" id="score-p2-name">Player 2</span>
+          <span class="score-role o-label" id="score-p2-role">O</span>
+        </div>
+        <span class="score-value" id="score-p2-value">0</span>
+      </div>
+    </section>
+
+    <div id="status" class="status"></div>
+
+    <div class="board" id="board">
+      <div class="cell" data-index="0"></div>
+      <div class="cell" data-index="1"></div>
+      <div class="cell" data-index="2"></div>
+      <div class="cell" data-index="3"></div>
+      <div class="cell" data-index="4"></div>
+      <div class="cell" data-index="5"></div>
+      <div class="cell" data-index="6"></div>
+      <div class="cell" data-index="7"></div>
+      <div class="cell" data-index="8"></div>
+    </div>
+
+    <button id="restart">Restart</button>
+  </main>
+
+  <div class="modal-overlay hidden" id="modal">
+    <div class="modal">
+      <div class="modal-result" id="modal-result"></div>
+      <div class="modal-sub" id="modal-sub"></div>
+      <button id="play-again">Play Again</button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
